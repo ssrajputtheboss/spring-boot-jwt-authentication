@@ -32,7 +32,7 @@ public class MainController {
     @GetMapping("/hello")
     public String hello(){return "Hello";}
 
-    @GetMapping("/authenticate")
+    @PostMapping("/authenticate")
     public ResponseEntity<?> authorize(@RequestBody AuthenticationRequest request){
         boolean isAuthenticated;
         try{
