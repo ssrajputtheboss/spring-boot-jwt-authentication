@@ -18,6 +18,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.SignatureException;
+
 @Component
 public class JwtFilter extends OncePerRequestFilter{
     @Autowired
@@ -37,7 +39,13 @@ public class JwtFilter extends OncePerRequestFilter{
                 }
                 if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
                     UserDetails details = userDetailService.loadUserByUsername(username);
-                    if(jwtService.validateToken(jwt, details)){
+                    boolean isValidToken = false;
+                    try {
+                        isValidToken = jwtService.validateToken(jwt, details);
+                    } catch (SignatureException e) {
+                        isValidToken = false;
+                    }
+                    if(isValidToken){
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                             = new UsernamePasswordAuthenticationToken(details, null , details.getAuthorities());
                         usernamePasswordAuthenticationToken

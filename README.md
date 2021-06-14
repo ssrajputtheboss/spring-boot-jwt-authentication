@@ -1,3 +1,9 @@
 # About
 
-Authentication using jwt token. Under developement.
+Authentication using jwt token.
+
+## How to run 
+
+```bash
+mvnw spring-boot:run
+```

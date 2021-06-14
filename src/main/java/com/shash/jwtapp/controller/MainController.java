@@ -2,6 +2,7 @@ package com.shash.jwtapp.controller;
 
 import com.shash.jwtapp.model.AuthenticationRequest;
 import com.shash.jwtapp.model.AuthenticationResponse;
+import com.shash.jwtapp.model.UserList;
 import com.shash.jwtapp.service.JwtService;
 import com.shash.jwtapp.service.MyUserDetailService;
 import com.shash.jwtapp.utils.Verifier;
@@ -43,7 +44,7 @@ public class MainController {
             isAuthenticated = true;
         }catch(BadCredentialsException e){
             isAuthenticated = false;
-            System.out.println("bad credentials");
+            return ResponseEntity.ok("User Not Found Or Credentials Invalid");
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         String jwt = "None";
@@ -54,13 +55,12 @@ public class MainController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody AuthenticationRequest user){
-        System.out.println(user.toString());
+    public ResponseEntity<?> register(@RequestBody UserList user){
         if(Verifier.email(user.getUsername()) && Verifier.pass(user.getPassword())){
-            //userDetailsService.save();
-            return ResponseEntity.ok("User Added");
+            if(userDetailsService.save(user))
+                return ResponseEntity.ok("User Added");
+            else return ResponseEntity.ok("User with specified email already exists");
         }else{
-            System.out.println(user.getUsername()+","+user.getPassword());
             return ResponseEntity.ok("Invalid Credentials");
         }
     }
